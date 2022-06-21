@@ -1,0 +1,43 @@
+version: '3.4'
+
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    max-size: "10m"
+    max-file: "3"
+    
+services:
+  identifier:
+    image: semtech/mu-identifier:1.9.1
+    environment:
+      DEFAULT_MU_AUTH_ALLOWED_GROUPS_HEADER: "[{\"variables\":[],\"name\":\"public\"}]"
+      SESSION_COOKIE_SECURE: "on"
+    labels:
+      - "logging=true"
+    restart: "no"
+    logging: *default-logging
+  frontend:
+    image: nbittich/generic-maintenance-page
+    restart: "no"
+    environment:
+       MAINTENANCE_MESSAGE: "Het OrganisatiePortaal is momenteel niet beschikbaar wegens technisch onderhoud."
+       MAINTENANCE_APP_TITLE: "OrganisatiePortaal"
+       MAINTENANCE_APP_URL: "organisaties.abb.vlaanderen.be"
+    labels:
+      - "logging=true"
+    networks:
+      - proxy
+      - default
+  dispatcher:
+    image: semtech/mu-dispatcher:2.1.0-beta.2
+    volumes:
+      - ./config/dispatcher:/config
+    labels:
+      - "logging=true"
+    restart: "no"
+    logging: *default-logging
+networks:
+  proxy:
+    external:
+      name: letsencrypt_default
