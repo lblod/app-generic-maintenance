@@ -18,7 +18,7 @@ services:
     restart: "no"
     logging: *default-logging
   frontend:
-    image: nbittich/generic-maintenance-page
+    image: lblod/frontend-generic-maintenance
     restart: "no"
     environment:
        EMBER_MAINTENANCE_MESSAGE: "Het OrganisatiePortaal is momenteel niet beschikbaar wegens technisch onderhoud."
